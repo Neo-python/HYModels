@@ -11,7 +11,7 @@ from sqlalchemy import event
 class Factory(Common, db.Model, UUIDModel):
     """厂家用户"""
 
-    _privacy_fields = {'status', 'open_id'}
+    _privacy_fields = {'status', 'open_id', 'id'}
 
     open_id = db.Column(db.String(length=32), unique=True, nullable=False, comment='用户微信uuid')
     name = db.Column(db.String(length=50), nullable=False, comment='用户名:厂家名')
@@ -24,6 +24,6 @@ class Factory(Common, db.Model, UUIDModel):
     def generate_token(self):
         """生成缓存"""
         builder = Token(user=self)
-        token = builder.generate_token(sub=self.id)
+        token = builder.generate_token(sub=self.uuid)
         builder.cache()
         return token
