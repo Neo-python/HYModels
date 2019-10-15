@@ -1,19 +1,19 @@
 """业务"""
 import datetime
 from init import db
+# from models.HYModels import user
 from plugins.HYplugins.orm import Common
 from sqlalchemy import event
 
 
 class Order(Common, db.Model):
-    """厂家订单
-    update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误.
-    """
+    """厂家订单"""
+    """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
 
     _privacy_fields = {'factory_uuid', 'status'}
 
-    factory_uuid = db.Column(db.Integer, db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
@@ -59,7 +59,7 @@ class DriverOrder(Common, db.Model):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id'}
 
-    driver_uuid = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=False, comment='驾驶员UUID')
+    driver_uuid = db.Column(db.String(length=32), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
     order_id = db.Column(db.Integer, db.ForeignKey('factory_order.id'), comment='订单编号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')

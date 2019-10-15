@@ -1,6 +1,18 @@
 """用户"""
 from init import db
-from plugins.HYplugins.orm import Common, UUIDModel, UserToken
+from plugins.HYplugins.orm import Common, UUIDModel
+from plugins.HYplugins.common.authorization import Token
+
+
+class UserToken(object):
+    """用户类型模型,token相关方法"""
+
+    def generate_token(self):
+        """生成缓存"""
+        builder = Token(user=self)
+        token = builder.generate_token(sub=self.uuid)
+        builder.cache()
+        return token
 
 
 #  用户
