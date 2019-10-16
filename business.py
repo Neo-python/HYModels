@@ -1,7 +1,6 @@
 """业务"""
 import datetime
 from init import db
-# from models.HYModels import user
 from plugins.HYplugins.orm import Common
 from sqlalchemy import event
 
@@ -66,7 +65,7 @@ class DriverOrder(Common, db.Model):
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
     time = db.Column(db.Time, comment='订单具体时间')
     driver_schedule = db.Column(db.SMALLINT, default=1,
-                                comment='驾驶员进度:99:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
+                                comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
 
     order = db.relationship(Order, foreign_keys=[order_id])
     driver = db.relationship("Driver", foreign_keys=[driver_uuid])
