@@ -20,10 +20,10 @@ class OrderBase(Common, OrderIdModel, db.Model):
     time = db.Column(db.Time, comment='订单具体时间')
     schedule = db.Column(db.SMALLINT, default=0, comment='订单进度:0:待接单,1:已接单,2:已完成', index=True)  # 增加索引 -> 事务锁,不会造成表锁
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='订单内容更新时间')
-    driver_order_id = db.Column(db.Integer, db.ForeignKey('driver_order.id'), comment='驾驶员订单编号')
+    driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='驾驶员订单编号')
 
     factory = db.relationship('FactoryBase', backref='orders')
-    driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_id])
+    driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_uuid])
 
     def factory_info(self, result: dict, *args, **kwargs):
         """厂家详情"""
@@ -33,7 +33,7 @@ class OrderBase(Common, OrderIdModel, db.Model):
         """驾驶员详情"""
         if self.driver_order:
             result['driver_info'] = self.driver_order.driver.serialization()
-            result['driver_schedule'] = [item.serialization(remove={'driver_order_id', 'id'}) for item in
+            result['driver_schedule'] = [item.serialization(remove={'driver_order_uuid', 'id'}) for item in
                                          self.driver_order.schedules]
         else:
             result['driver_info'] = {}
@@ -43,7 +43,7 @@ class OrderBase(Common, OrderIdModel, db.Model):
         """驾驶员端序列化"""
         if increase is None: increase = set()
         if remove is None: remove = set()
-        remove = remove | {'schedule', 'driver_order_id'}
+        remove = remove | {'schedule', 'driver_order_uuid'}
         increase = increase | set()
         return self.serialization(increase=increase, remove=remove, funcs=[('factory_info', tuple(), dict())])
 
@@ -60,7 +60,7 @@ class DriverOrderBase(Common, OrderIdModel, db.Model):
     __tablename__ = 'driver_order'
 
     driver_uuid = db.Column(db.String(length=32), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
-    order_uuid = db.Column(db.Integer, db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
+    factory_order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
@@ -68,7 +68,7 @@ class DriverOrderBase(Common, OrderIdModel, db.Model):
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
 
-    order = db.relationship(OrderBase, foreign_keys=[order_uuid])
+    order = db.relationship(OrderBase, foreign_keys=[factory_order_uuid])
     driver = db.relationship("DriverBase", foreign_keys=[driver_uuid])
 
     def order_infos(self, result: dict, *args, **kwargs):
@@ -82,14 +82,14 @@ class DriverOrderBase(Common, OrderIdModel, db.Model):
 
     def schedule_info(self, result: dict, *args, **kwargs):
         """进度详情"""
-        result['schedules'] = [item.serialization(remove={'driver_order_id', 'id'}) for item in self.schedules]
+        result['schedules'] = [item.serialization(remove={'driver_order_uuid', 'id'}) for item in self.schedules]
 
 
 class DriverOrderScheduleLogBase(Common, db.Model):
     """驾驶员订单进度日志"""
     __tablename__ = 'driver_order_schedule_log'
 
-    driver_order_id = db.Column(db.Integer, db.ForeignKey('driver_order.id'), comment='订单编号')
+    driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='订单编号')
     schedule = db.Column(db.SMALLINT, default=1, comment='驾驶员进度:0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收,-1:订单已取消')
 
     order = db.relationship(DriverOrderBase, backref='schedules')
