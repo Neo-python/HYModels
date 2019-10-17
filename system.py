@@ -24,6 +24,6 @@ class AdminBase(Common, db.Model, UUIDModel, UserToken):
     _privacy_fields = {'status', 'admin'}
 
     open_id = db.Column(db.String(length=32), unique=True, comment='用户微信uuid')
-    name = db.Column(db.String(length=10), nullable=False, comment='管理员姓名')
+    name = db.Column(db.String(length=10), comment='管理员姓名')
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     sms_status = db.Column(db.Boolean, default=False, comment='是否接收短信的状态')
