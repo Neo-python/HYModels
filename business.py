@@ -68,7 +68,7 @@ class DriverOrderBase(Common, OrderIdModel, db.Model):
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
 
-    order = db.relationship(OrderBase, foreign_keys=[order_id])
+    order = db.relationship(OrderBase, foreign_keys=[order_uuid])
     driver = db.relationship("DriverBase", foreign_keys=[driver_uuid])
 
     def order_infos(self, result: dict, *args, **kwargs):
