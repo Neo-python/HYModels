@@ -1,11 +1,11 @@
 """业务"""
 import datetime
 from init import db
-from plugins.HYplugins.orm import Common
+from plugins.HYplugins.orm import Common, OrderIdModel
 from sqlalchemy import event
 
 
-class OrderBase(Common, db.Model):
+class OrderBase(Common, OrderIdModel, db.Model):
     """厂家订单"""
     """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
@@ -54,13 +54,13 @@ class OrderBase(Common, db.Model):
         return self.serialization(increase=increase, remove=remove, funcs=[('driver_info', tuple(), dict())])
 
 
-class DriverOrderBase(Common, db.Model):
+class DriverOrderBase(Common, OrderIdModel, db.Model):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id'}
     __tablename__ = 'driver_order'
 
     driver_uuid = db.Column(db.String(length=32), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
-    order_id = db.Column(db.Integer, db.ForeignKey('factory_order.id'), comment='订单编号')
+    order_uuid = db.Column(db.Integer, db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
