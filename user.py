@@ -35,6 +35,7 @@ class Driver(Common, db.Model, UUIDModel, UserToken):
     """驾驶员用户"""
 
     _privacy_fields = {'status', 'open_id', 'id'}
+
     open_id = db.Column(db.String(length=32), unique=True, nullable=False, comment='用户微信uuid')
     name = db.Column(db.String(length=10), nullable=False, comment='用户名:驾驶员名')
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')

@@ -19,6 +19,8 @@ class Admin(Common, db.Model, UUIDModel, UserToken):
     """管理员模型"""
     """管理员注册流程:数据库写入手机号,通过手机号匹配短信验证码最终关联open_id"""
 
+    _privacy_fields = {'status', 'admin'}
+
     open_id = db.Column(db.String(length=32), unique=True, nullable=False, comment='用户微信uuid')
     name = db.Column(db.String(length=10), nullable=False, comment='管理员姓名')
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
