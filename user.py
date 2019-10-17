@@ -17,8 +17,10 @@ class UserToken(object):
 
 #  用户
 
-class Factory(Common, db.Model, UUIDModel, UserToken):
+class FactoryBase(Common, db.Model, UUIDModel, UserToken):
     """厂家用户"""
+
+    __tablename__ = 'factory'
 
     _privacy_fields = {'status', 'open_id', 'id'}
 
@@ -31,8 +33,10 @@ class Factory(Common, db.Model, UUIDModel, UserToken):
     latitude = db.Column(db.Float, comment='纬度:厂家特有字段')
 
 
-class Driver(Common, db.Model, UUIDModel, UserToken):
+class DriverBase(Common, db.Model, UUIDModel, UserToken):
     """驾驶员用户"""
+
+    __tablename__ = 'driver'
 
     _privacy_fields = {'status', 'open_id', 'id'}
 

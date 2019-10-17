@@ -15,9 +15,11 @@ class UserToken(object):
         return token
 
 
-class Admin(Common, db.Model, UUIDModel, UserToken):
+class AdminBase(Common, db.Model, UUIDModel, UserToken):
     """管理员模型"""
     """管理员注册流程:数据库写入手机号,通过手机号匹配短信验证码最终关联open_id"""
+
+    __tablename__ = 'admin'
 
     _privacy_fields = {'status', 'admin'}
 

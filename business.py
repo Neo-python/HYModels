@@ -5,7 +5,7 @@ from plugins.HYplugins.orm import Common
 from sqlalchemy import event
 
 
-class Order(Common, db.Model):
+class OrderBase(Common, db.Model):
     """厂家订单"""
     """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
@@ -22,8 +22,8 @@ class Order(Common, db.Model):
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='订单内容更新时间')
     driver_order_id = db.Column(db.Integer, db.ForeignKey('driver_order.id'), comment='驾驶员订单编号')
 
-    factory = db.relationship('Factory', backref='orders')
-    driver_order = db.relationship('DriverOrder', lazy='joined', foreign_keys=[driver_order_id])
+    factory = db.relationship('FactoryBase', backref='orders')
+    driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_id])
 
     def factory_info(self, result: dict, *args, **kwargs):
         """厂家详情"""
@@ -54,9 +54,10 @@ class Order(Common, db.Model):
         return self.serialization(increase=increase, remove=remove, funcs=[('driver_info', tuple(), dict())])
 
 
-class DriverOrder(Common, db.Model):
+class DriverOrderBase(Common, db.Model):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id'}
+    __tablename__ = 'driver_order'
 
     driver_uuid = db.Column(db.String(length=32), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
     order_id = db.Column(db.Integer, db.ForeignKey('factory_order.id'), comment='订单编号')
@@ -67,8 +68,8 @@ class DriverOrder(Common, db.Model):
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
 
-    order = db.relationship(Order, foreign_keys=[order_id])
-    driver = db.relationship("Driver", foreign_keys=[driver_uuid])
+    order = db.relationship(OrderBase, foreign_keys=[order_id])
+    driver = db.relationship("DriverBase", foreign_keys=[driver_uuid])
 
     def order_infos(self, result: dict, *args, **kwargs):
         """添加厂家详情与进度详情"""
@@ -84,16 +85,17 @@ class DriverOrder(Common, db.Model):
         result['schedules'] = [item.serialization(remove={'driver_order_id', 'id'}) for item in self.schedules]
 
 
-class DriverOrderScheduleLog(Common, db.Model):
+class DriverOrderScheduleLogBase(Common, db.Model):
     """驾驶员订单进度日志"""
+    __tablename__ = 'driver_order_schedule_log'
 
     driver_order_id = db.Column(db.Integer, db.ForeignKey('driver_order.id'), comment='订单编号')
     schedule = db.Column(db.SMALLINT, default=1, comment='驾驶员进度:0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收,-1:订单已取消')
 
-    order = db.relationship(DriverOrder, backref='schedules')
+    order = db.relationship(DriverOrderBase, backref='schedules')
 
 
-@event.listens_for(DriverOrder.driver_schedule, 'set', propagate=True)
+@event.listens_for(DriverOrderBase.driver_schedule, 'set', propagate=True)
 def driver_order_receive_set(target, value, old_value, initiator):
     """驾驶员订单状态改变,记录日志.
     触发器内部不做事务提交,统一由引发者提交事务
@@ -105,7 +107,7 @@ def driver_order_receive_set(target, value, old_value, initiator):
     """
     if not target.id:
         target.direct_flush_()  # 驾驶员首次接受订单时,驾驶员订单编号为空.先提交事务获取订单编号
-    DriverOrderScheduleLog(driver_order_id=target.id, schedule=value).direct_add_()
+    DriverOrderScheduleLogBase(driver_order_id=target.id, schedule=value).direct_add_()
 
     if value == -1:
-        Order.query.filter_by(id=target.order_id).update({'schedule': 0, 'driver_order_id': None})
+        OrderBase.query.filter_by(id=target.order_id).update({'schedule': 0, 'driver_order_id': None})
