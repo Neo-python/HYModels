@@ -54,6 +54,14 @@ class OrderBase(Common, OrderIdModel, db.Model):
         return self.serialization(increase=increase, remove=remove, funcs=[('driver_info', tuple(), dict())])
 
 
+class OrderEntrustBase(Common, db.Model):
+    """订单委托"""
+
+    order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
+    driver_uuid = db.Column(db.String(length=32), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
+    entrust_status = db.Column(db.SMALLINT, default=0, comment='委托状态. -1:委托锁定,无法接受委托 0:未接受委托 1:已接受委托')
+
+
 class DriverOrderBase(Common, OrderIdModel, db.Model):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id'}
