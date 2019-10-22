@@ -1,6 +1,6 @@
 """用户"""
 from init import db
-from plugins.HYplugins.orm import Common, UUIDModel
+from plugins.HYplugins.orm import Common, UUIDModel, Coordinate
 from plugins.HYplugins.common.authorization import Token
 
 
@@ -17,7 +17,7 @@ class UserToken(object):
 
 #  用户
 
-class FactoryBase(Common, db.Model, UUIDModel, UserToken):
+class FactoryBase(Common, db.Model, UUIDModel, UserToken, Coordinate):
     """厂家用户"""
 
     __tablename__ = 'factory'
@@ -29,8 +29,6 @@ class FactoryBase(Common, db.Model, UUIDModel, UserToken):
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     address = db.Column(db.String(length=255), default='', comment='用户地址')
     address_replenish = db.Column(db.String(length=255), default='', comment='地址补充')
-    longitude = db.Column(db.Float, comment='经度:厂家特有字段')
-    latitude = db.Column(db.Float, comment='纬度:厂家特有字段')
 
 
 class DriverBase(Common, db.Model, UUIDModel, UserToken):
