@@ -1,11 +1,11 @@
 """业务"""
 import datetime
 from init import db
-from plugins.HYplugins.orm import Common, OrderIdModel
+from plugins.HYplugins.orm import Common, OrderIdModel, Coordinate
 from sqlalchemy import event
 
 
-class OrderBase(Common, OrderIdModel, db.Model):
+class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
     """厂家订单"""
     """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
