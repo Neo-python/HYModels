@@ -134,3 +134,5 @@ def driver_order_receive_set(target, value, old_value, initiator):
 
     if value == -1:
         OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': 0, 'driver_order_uuid': None})
+    else:
+        OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': value})
