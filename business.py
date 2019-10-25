@@ -127,7 +127,8 @@ def driver_order_receive_set(target, value, old_value, initiator):
     """
     if not target.id:
         target.direct_flush_()  # 驾驶员首次接受订单时,驾驶员订单编号为空.先提交事务获取订单编号
-    DriverOrderScheduleLogBase(driver_order_id=target.id, schedule=value).direct_add_()
+
+    DriverOrderScheduleLogBase(driver_order_uuid=target.order_uuid, schedule=value).direct_add_()
 
     if value == -1:
-        OrderBase.query.filter_by(id=target.order_id).update({'schedule': 0, 'driver_order_id': None})
+        OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': 0, 'driver_order_uuid': None})
