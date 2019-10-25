@@ -109,7 +109,8 @@ class DriverOrderScheduleLogBase(Common, db.Model):
     """驾驶员订单进度日志"""
     __tablename__ = 'driver_order_schedule_log'
 
-    driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='订单编号')
+    driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid', ondelete='CASCADE'),
+                                  comment='订单编号')
     schedule = db.Column(db.SMALLINT, default=1, comment='驾驶员进度:0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收,-1:订单已取消')
 
     order = db.relationship(DriverOrderBase, backref='schedules')
