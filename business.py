@@ -14,6 +14,8 @@ class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
 
     factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
+    contact = db.Column(db.String(length=6), default='', comment='联系人')
+    phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
