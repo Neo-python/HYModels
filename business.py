@@ -79,7 +79,7 @@ class OrderEntrustBase(Common, db.Model):
     )
 
 
-class DriverOrderBase(Common, OrderIdModel, db.Model):
+class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id'}
     __tablename__ = 'driver_order'
@@ -91,6 +91,9 @@ class DriverOrderBase(Common, OrderIdModel, db.Model):
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
     time = db.Column(db.Time, comment='订单具体时间')
+    address = db.Column(db.String(length=255), default='', comment='订单地址')
+    address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
+
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
 
