@@ -24,6 +24,9 @@ class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='订单内容更新时间')
     driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='驾驶员订单编号')
 
+    address = db.Column(db.String(length=255), default='', comment='订单地址')
+    address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
+
     factory = db.relationship('FactoryBase', backref='orders')
     driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_uuid])
 
