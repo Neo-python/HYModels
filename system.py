@@ -21,7 +21,7 @@ class AdminBase(Common, db.Model, UUIDModel, UserToken):
 
     __tablename__ = 'admin'
 
-    _privacy_fields = {'status', 'admin'}
+    _privacy_fields = {'status', 'open_id', 'id'}
 
     open_id = db.Column(db.String(length=32), unique=True, comment='用户微信uuid')
     name = db.Column(db.String(length=10), comment='管理员姓名')
