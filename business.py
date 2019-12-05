@@ -81,7 +81,7 @@ class OrderEntrustBase(Common, db.Model):
 
 class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
     """驾驶员订单列表"""
-    _privacy_fields = {'status', 'user_id'}
+    _privacy_fields = {'status', 'user_id', 'id'}
     __tablename__ = 'driver_order'
 
     driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'), nullable=False,
@@ -103,12 +103,12 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
 
     def order_infos(self, result: dict, *args, **kwargs):
         """添加厂家详情与进度详情"""
-        self.factory_info(result, *args, **kwargs)
+        # self.factory_info(result, *args, **kwargs)
         self.schedule_info(result, *args, **kwargs)
 
-    def factory_info(self, result: dict, *args, **kwargs):
-        """厂家详情"""
-        result['factory_info'] = self.order.factory.serialization(remove={'create_time'})
+    # def factory_info(self, result: dict, *args, **kwargs):
+    #     """厂家详情"""
+    #     result['factory_info'] = self.order.factory.serialization(remove={'create_time'})
 
     def schedule_info(self, result: dict, *args, **kwargs):
         """进度详情"""
