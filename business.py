@@ -1,7 +1,6 @@
 """业务"""
 import datetime
-from init import db
-from plugins.HYplugins.orm import Common, OrderIdModel, Coordinate
+from plugins.HYplugins.orm import Common, OrderIdModel, Coordinate, db
 from sqlalchemy import event
 
 

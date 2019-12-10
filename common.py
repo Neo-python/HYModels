@@ -1,6 +1,5 @@
 """通用模型"""
-from init import db
-from plugins.HYplugins.orm import Common
+from plugins.HYplugins.orm import Common, db
 
 
 class ImagesBase(Common, db.Model):

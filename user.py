@@ -1,6 +1,5 @@
 """用户"""
-from init import db
-from plugins.HYplugins.orm import Common, UUIDModel, Coordinate
+from plugins.HYplugins.orm import Common, UUIDModel, Coordinate, db
 from plugins.HYplugins.common.authorization import Token
 
 
