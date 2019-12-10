@@ -1,10 +1,21 @@
 """业务"""
 import datetime
-from plugins.HYplugins.orm import Common, OrderIdModel, Coordinate, db
+from plugins.HYplugins.orm import Common, OrderIdModel, Coordinate, db, Contact, AddressInfo
 from sqlalchemy import event
 
 
-class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
+class OrderBaseInfo(Contact, AddressInfo, Coordinate):
+    """订单基础信息"""
+
+
+class FactoryContactBase(Common, OrderBaseInfo, db.Model):
+    """厂家常用联系人"""
+    __tablename__ = 'factory_contact'
+
+    factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+
+
+class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     """厂家订单"""
     """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
@@ -13,8 +24,6 @@ class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
 
     factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
-    contact = db.Column(db.String(length=20), default='', comment='联系人')
-    phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
@@ -22,9 +31,6 @@ class OrderBase(Common, OrderIdModel, db.Model, Coordinate):
     schedule = db.Column(db.SMALLINT, default=0, comment='订单进度:0:待接单,1:已接单,2:已完成', index=True)  # 增加索引 -> 事务锁,不会造成表锁
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='订单内容更新时间')
     driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='驾驶员订单编号')
-
-    address = db.Column(db.String(length=255), default='', comment='订单地址')
-    address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
 
     factory = db.relationship('FactoryBase', backref='orders')
     driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_uuid])

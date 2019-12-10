@@ -14,15 +14,8 @@ class ImagesBase(Common, db.Model):
         super().__init__(**kwargs)
 
 
-class Area(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    superior_id = db.Column(db.Integer)
-    name = db.Column(db.String(length=255))
-    level = db.Column(db.Integer)
-
-
-class Area2(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    superior_id = db.Column(db.Integer)
-    name = db.Column(db.String(length=255))
-    level = db.Column(db.Integer)
+# class Area(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     superior_id = db.Column(db.Integer)
+#     name = db.Column(db.String(length=255))
+#     level = db.Column(db.Integer)
