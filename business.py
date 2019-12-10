@@ -20,7 +20,7 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     """update_time:司机接单时,提交订单原更新时间.原更新时间与订单现更新时间一致,接单通过.否则返回特有错误."""
     __tablename__ = 'factory_order'
 
-    _privacy_fields = {'factory_uuid', 'status'}
+    _privacy_fields = {'factory_uuid', 'status', 'id'}
 
     factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
@@ -42,7 +42,7 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     def driver_info(self, result: dict, *args, **kwargs):
         """驾驶员详情"""
         if self.driver_order:
-            result['driver_info'] = self.driver_order.driver.serialization()
+            result['driver_info'] = self.driver_order.driver.serialization(remove={'verify', 'create_time'})
             result['driver_schedule'] = [item.serialization(remove={'driver_order_uuid', 'id'}) for item in
                                          self.driver_order.schedules]
         else:
@@ -61,7 +61,11 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
         """厂家端序列化"""
         if increase is None: increase = set()
         if remove is None: remove = set()
-        return self.serialization(increase=increase, remove=remove, funcs=[('driver_info', tuple(), dict())])
+        result = dict()
+        result.update({'order_info': self.serialization(increase=increase, remove=remove)})
+        self.driver_info(result=result)
+
+        return result
 
 
 class OrderEntrustBase(Common, db.Model):
@@ -114,10 +118,6 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
         """添加厂家详情与进度详情"""
         # self.factory_info(result, *args, **kwargs)
         self.schedule_info(result, *args, **kwargs)
-
-    # def factory_info(self, result: dict, *args, **kwargs):
-    #     """厂家详情"""
-    #     result['factory_info'] = self.order.factory.serialization(remove={'create_time'})
 
     def schedule_info(self, result: dict, *args, **kwargs):
         """进度详情"""
