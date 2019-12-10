@@ -53,9 +53,14 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
         """驾驶员端序列化"""
         if increase is None: increase = set()
         if remove is None: remove = set()
-        remove = remove | {'schedule', 'driver_order_uuid'}
+        # 自定义需要去除的字段可以写成 remove = remove | {'field'}
+        remove = remove | set()
         increase = increase | set()
-        return self.serialization(increase=increase, remove=remove, funcs=[('factory_info', tuple(), dict())])
+
+        result = dict()
+        result.update({'order_info': self.serialization(increase=increase, remove=remove)})
+        self.factory_info(result=result)
+        return result
 
     def factory_serialization(self, increase: set = None, remove: set = None):
         """厂家端序列化"""
@@ -89,7 +94,7 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
 #     )
 
 
-class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
+class DriverOrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id', 'id'}
     __tablename__ = 'driver_order'
@@ -97,14 +102,14 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
     driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'), nullable=False,
                             comment='驾驶员UUID')
     factory_order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
-    contact = db.Column(db.String(length=20), default='', comment='联系人')
-    phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
+    # contact = db.Column(db.String(length=20), default='', comment='联系人')
+    # phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
     time = db.Column(db.Time, comment='订单具体时间')
-    address = db.Column(db.String(length=255), default='', comment='订单地址')
-    address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
+    # address = db.Column(db.String(length=255), default='', comment='订单地址')
+    # address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
 
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
