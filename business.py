@@ -102,14 +102,10 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'), nullable=False,
                             comment='驾驶员UUID')
     factory_order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
-    # contact = db.Column(db.String(length=20), default='', comment='联系人')
-    # phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
     time = db.Column(db.Time, comment='订单具体时间')
-    # address = db.Column(db.String(length=255), default='', comment='订单地址')
-    # address_replenish = db.Column(db.String(length=255), default='', comment='订单地址补充')
 
     driver_schedule = db.Column(db.SMALLINT, default=1,
                                 comment='驾驶员进度:-1:订单已取消,0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收')
@@ -126,6 +122,14 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     def schedule_info(self, result: dict, *args, **kwargs):
         """进度详情"""
         result['schedules'] = [item.serialization(remove={'driver_order', 'id'}) for item in self.schedules]
+
+    def customize_serialization(self):
+        """自定义序列化"""
+        result = dict()
+        result.update({'schedules': [item.serialization(remove={'driver_order', 'id'}) for item in self.schedules]})
+        result.update({'order_info': self.serialization()})
+        result.update({'factory_info': self.order.factory.serialization()})
+        return result
 
 
 class DriverOrderScheduleLogBase(Common, db.Model):
@@ -154,6 +158,6 @@ def driver_order_receive_set(target, value, old_value, initiator):
     DriverOrderScheduleLogBase(driver_order_uuid=target.order_uuid, schedule=value).direct_add_()
 
     if value == -1:
-        OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': 0, 'driver_order_uuid': None})
+        OrderBase.query.filter_by(order_uuid=target.factory_order_uuid).update({'schedule': 0, 'driver_order_uuid': None})
     else:
         OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': value})
