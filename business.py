@@ -64,30 +64,29 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
         result = dict()
         result.update({'order_info': self.serialization(increase=increase, remove=remove)})
         self.driver_info(result=result)
-
         return result
 
 
-class OrderEntrustBase(Common, db.Model):
-    """订单委托"""
-
-    __tablename__ = 'order_entrust'
-
-    order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
-    driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'),
-                            nullable=False, index=True, comment='驾驶员UUID')
-    entrust_status = db.Column(db.SMALLINT, default=0, comment='委托状态. -1:委托锁定,无法接受委托 0:未接受委托 1:已接受委托')
-    managers_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('admin.uuid'), nullable=False,
-                              index=True, comment='委托订单管理员')
-
-    order = db.relationship(OrderBase, foreign_keys=[order_uuid])
-    driver = db.relationship('DriverBase', foreign_keys=[driver_uuid])
-    managers = db.relationship('AdminBase', foreign_keys=[managers_uuid])
-
-    __table_args__ = (
-        db.UniqueConstraint('order_uuid', 'driver_uuid', name='uix_order_uuid_driver_uuid'),
-        db.Index('ix_order_uuid_driver_uuid', 'order_uuid', 'driver_uuid'),
-    )
+# class OrderEntrustBase(Common, db.Model):
+#     """订单委托"""
+#
+#     __tablename__ = 'order_entrust'
+#
+#     order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
+#     driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'),
+#                             nullable=False, index=True, comment='驾驶员UUID')
+#     entrust_status = db.Column(db.SMALLINT, default=0, comment='委托状态. -1:委托锁定,无法接受委托 0:未接受委托 1:已接受委托')
+#     managers_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('admin.uuid'), nullable=False,
+#                               index=True, comment='委托订单管理员')
+#
+#     order = db.relationship(OrderBase, foreign_keys=[order_uuid])
+#     driver = db.relationship('DriverBase', foreign_keys=[driver_uuid])
+#     managers = db.relationship('AdminBase', foreign_keys=[managers_uuid])
+#
+#     __table_args__ = (
+#         db.UniqueConstraint('order_uuid', 'driver_uuid', name='uix_order_uuid_driver_uuid'),
+#         db.Index('ix_order_uuid_driver_uuid', 'order_uuid', 'driver_uuid'),
+#     )
 
 
 class DriverOrderBase(Common, OrderIdModel, db.Model, Coordinate):
