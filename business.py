@@ -12,7 +12,8 @@ class FactoryContactBase(Common, OrderBaseInfo, db.Model):
     """厂家常用联系人"""
     __tablename__ = 'factory_contact'
 
-    factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('factory.uuid'), nullable=False,
+                             comment='厂家UUID')
 
 
 class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
@@ -158,6 +159,7 @@ def driver_order_receive_set(target, value, old_value, initiator):
     DriverOrderScheduleLogBase(driver_order_uuid=target.order_uuid, schedule=value).direct_add_()
 
     if value == -1:
-        OrderBase.query.filter_by(order_uuid=target.factory_order_uuid).update({'schedule': 0, 'driver_order_uuid': None})
+        OrderBase.query.filter_by(order_uuid=target.factory_order_uuid).update(
+            {'schedule': 0, 'driver_order_uuid': None})
     else:
         OrderBase.query.filter_by(order_uuid=target.order_uuid).update({'schedule': value})
