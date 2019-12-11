@@ -12,8 +12,7 @@ class FactoryContactBase(Common, OrderBaseInfo, db.Model):
     """厂家常用联系人"""
     __tablename__ = 'factory_contact'
 
-    factory_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('factory.uuid'), nullable=False,
-                             comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=39), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
 
 class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
@@ -23,7 +22,7 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
 
     _privacy_fields = {'factory_uuid', 'status', 'id'}
 
-    factory_uuid = db.Column(db.String(length=32), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=39), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
@@ -73,36 +72,13 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
         return result
 
 
-# class OrderEntrustBase(Common, db.Model):
-#     """订单委托"""
-#
-#     __tablename__ = 'order_entrust'
-#
-#     order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
-#     driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'),
-#                             nullable=False, index=True, comment='驾驶员UUID')
-#     entrust_status = db.Column(db.SMALLINT, default=0, comment='委托状态. -1:委托锁定,无法接受委托 0:未接受委托 1:已接受委托')
-#     managers_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('admin.uuid'), nullable=False,
-#                               index=True, comment='委托订单管理员')
-#
-#     order = db.relationship(OrderBase, foreign_keys=[order_uuid])
-#     driver = db.relationship('DriverBase', foreign_keys=[driver_uuid])
-#     managers = db.relationship('AdminBase', foreign_keys=[managers_uuid])
-#
-#     __table_args__ = (
-#         db.UniqueConstraint('order_uuid', 'driver_uuid', name='uix_order_uuid_driver_uuid'),
-#         db.Index('ix_order_uuid_driver_uuid', 'order_uuid', 'driver_uuid'),
-#     )
-
-
 class DriverOrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     """驾驶员订单列表"""
     _privacy_fields = {'status', 'user_id', 'id'}
     __tablename__ = 'driver_order'
 
-    driver_uuid = db.Column(db.String(length=32, collation='utf8_bin'), db.ForeignKey('driver.uuid'), nullable=False,
-                            comment='驾驶员UUID')
-    factory_order_uuid = db.Column(db.String(24), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
+    driver_uuid = db.Column(db.String(length=39), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
+    factory_order_uuid = db.Column(db.String(12), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
     date = db.Column(db.Date, default=datetime.date.today, comment='订单开始日期')
@@ -137,7 +113,7 @@ class DriverOrderScheduleLogBase(Common, db.Model):
     """驾驶员订单进度日志"""
     __tablename__ = 'driver_order_schedule_log'
 
-    driver_order_uuid = db.Column(db.String(length=24), db.ForeignKey('driver_order.order_uuid'), comment='订单编号')
+    driver_order_uuid = db.Column(db.String(length=12), db.ForeignKey('driver_order.order_uuid'), comment='订单编号')
     schedule = db.Column(db.SMALLINT, default=1, comment='驾驶员进度:0:未接单1:已接单,2:已出发,3:已到达厂家,4:返程中,5:已送达,6:已验收,-1:订单已取消')
 
     order = db.relationship(DriverOrderBase, backref='schedules')
