@@ -63,7 +63,7 @@ class DriverBase(Common, db.Model, UUIDModel, UserToken):
 
     __tablename__ = 'driver'
 
-    _privacy_fields = {'status', 'open_id', 'id'}
+    _privacy_fields = {'status', 'open_id', 'id', 'remark'}
 
     open_id = db.Column(db.String(length=32), unique=True, nullable=False, comment='用户微信uuid')
     name = db.Column(db.String(length=10), nullable=False, comment='用户名:驾驶员名')
