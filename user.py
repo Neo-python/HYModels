@@ -69,4 +69,4 @@ class DriverBase(Common, db.Model, UUIDModel, UserToken):
     name = db.Column(db.String(length=10), nullable=False, comment='用户名:驾驶员名')
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     number_plate = db.Column(db.String(length=10), default='', comment='车牌号:驾驶员特有字段')
-    verify = db.Column(db.Integer, default=False, comment='账号审核状态,-2:封禁 -1:审核失败 0:待审核 1:审核通过')
+    verify = db.Column(db.SMALLINT, default=False, comment='账号审核状态,-2:封禁 -1:审核失败 0:待审核 1:审核通过')
