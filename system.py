@@ -10,7 +10,7 @@ class UserToken(object):
     def generate_token(self):
         """生成缓存"""
         builder = Token(user=self)
-        token = builder.generate_token(sub=self.uuid, user_type=self.__class__.__name__)
+        token = builder.generate_token(uuid=self.uuid)
         builder.cache()
         return token
 
