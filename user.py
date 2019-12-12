@@ -70,4 +70,12 @@ class DriverBase(Common, db.Model, UUIDModel, UserToken):
     phone = db.Column(db.String(length=13), nullable=False, comment='手机号')
     number_plate = db.Column(db.String(length=10), default='', comment='车牌号:驾驶员特有字段')
     verify = db.Column(db.SMALLINT, default=False, comment='账号审核状态. -2:封禁 -1:审核失败 0:待审核 1:审核通过')
-    remark = db.Column(db.String(length=20), default='待审核', comment='管理员备注,对驾驶员状态的一种补充说明')
+
+
+class DriverSystemMessage(Common, db.Model):
+    """驾驶员系统消息"""
+
+    __tablename__ = 'driver_system_message'
+
+    genre = db.Column(db.SmallInteger, default=1, comment='消息通知类型.1:个人通知 2.订单信息')
+    remark = db.Column(db.String(length=255), default='', comment='消息内容')
