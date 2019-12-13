@@ -72,10 +72,12 @@ class DriverBase(Common, db.Model, UUIDModel, UserToken):
     verify = db.Column(db.SMALLINT, default=False, comment='账号审核状态. -2:封禁 -1:审核失败 0:待审核 1:审核通过')
 
 
-class DriverSystemMessage(Common, db.Model):
+class DriverSystemMessageBase(Common, db.Model):
     """驾驶员系统消息"""
 
     __tablename__ = 'driver_system_message'
 
+    driver_uuid = db.Column(db.String(length=39), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
     genre = db.Column(db.SmallInteger, default=1, comment='消息通知类型.1:个人通知 2.订单信息')
     remark = db.Column(db.String(length=255), default='', comment='消息内容')
+    reviewed = db.Column(db.SmallInteger, default=0, comment='用户查看状态. 0:未查看 1:已查看')
