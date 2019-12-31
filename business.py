@@ -12,7 +12,7 @@ class FactoryContactBase(Common, OrderBaseInfo, db.Model):
     """厂家常用联系人"""
     __tablename__ = 'factory_contact'
 
-    factory_uuid = db.Column(db.String(length=39), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=40), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
 
 class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
@@ -22,7 +22,7 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
 
     _privacy_fields = {'factory_uuid', 'status', 'id'}
 
-    factory_uuid = db.Column(db.String(length=39), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
+    factory_uuid = db.Column(db.String(length=40), db.ForeignKey('factory.uuid'), nullable=False, comment='厂家UUID')
 
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
@@ -30,7 +30,8 @@ class OrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     time = db.Column(db.Time, comment='订单具体时间')
     schedule = db.Column(db.SMALLINT, default=0, comment='订单进度:0:待接单,1:已接单,2:已完成', index=True)  # 增加索引 -> 事务锁,不会造成表锁
     update_time = db.Column(db.DateTime, default=datetime.datetime.now, comment='订单内容更新时间')
-    driver_order_uuid = db.Column(db.String(24), db.ForeignKey('driver_order.order_uuid'), comment='驾驶员订单编号')
+    driver_order_uuid = db.Column(db.String(12), db.ForeignKey('driver_order.order_uuid'), comment='驾驶员订单编号')
+    # driver_order_uuid = db.Column(db.String(12), comment='驾驶员订单编号')  # 厂家订单的驾驶员订单编号外键不做约束
 
     factory = db.relationship('FactoryBase', backref='orders')
     driver_order = db.relationship('DriverOrderBase', lazy='joined', foreign_keys=[driver_order_uuid])
@@ -77,7 +78,7 @@ class DriverOrderBase(Common, OrderIdModel, db.Model, OrderBaseInfo):
     _privacy_fields = {'status', 'user_id', 'id'}
     __tablename__ = 'driver_order'
 
-    driver_uuid = db.Column(db.String(length=39), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
+    driver_uuid = db.Column(db.String(length=40), db.ForeignKey('driver.uuid'), nullable=False, comment='驾驶员UUID')
     factory_order_uuid = db.Column(db.String(12), db.ForeignKey('factory_order.order_uuid'), comment='订单编号')
     description = db.Column(db.Text, comment='订单详情')
     images = db.Column(db.JSON, comment='订单图片')
