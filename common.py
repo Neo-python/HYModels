@@ -13,6 +13,7 @@ class ImagesBase(Common, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+
 # class Area(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     superior_id = db.Column(db.Integer)
@@ -25,3 +26,35 @@ class ImagesBase(Common, db.Model):
 #     superior_id = db.Column(db.Integer)
 #     name = db.Column(db.String(length=255))
 #     level = db.Column(db.Integer)
+
+
+# class FinanceReceiverBase(Common, db.Model):
+#     """财务收货人"""
+#
+#     __tablename__ = 'finance_receiver'
+#
+#     created_at = db.Column(db.DATETIME)
+#     updated_at = db.Column(db.DATETIME)
+#     deleted_at = db.Column(db.DATETIME)
+#
+#     name = db.Column(db.String(length=255))
+#     phone = db.Column(db.String(length=255))
+#     address = db.Column(db.String(length=255))
+#     tel = db.Column(db.String(length=255))
+#     autofill = db.Column(db.Integer)
+#
+#
+# class FinanceSenderBase(Common, db.Model):
+#     """财务发货人"""
+#
+#     __tablename__ = 'finance_sender'
+#
+#     created_at = db.Column(db.DATETIME)
+#     updated_at = db.Column(db.DATETIME)
+#     deleted_at = db.Column(db.DATETIME)
+#
+#     company_name = db.Column(db.String(length=255))
+#     phone = db.Column(db.String(length=255))
+#     remark = db.Column(db.String(length=255))
+#     autofill = db.Column(db.Integer)
+#
