@@ -18,7 +18,6 @@ class SystemParameterBase(Common, db.Model):
     """系统参数 持续增加"""
 
     __tablename__ = 'system_parameter'
-
     visitors_code = db.Column(db.String(255), nullable=False, comment='审核码')
 
 # class Area(db.Model):
