@@ -19,6 +19,7 @@ class SystemParameterBase(Common, db.Model):
 
     __tablename__ = 'system_parameter'
     visitors_code = db.Column(db.String(255), nullable=False, comment='审核码')
+    remark = db.Column(db.String(255), nullable=False, comment='备注')
 
 # class Area(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
